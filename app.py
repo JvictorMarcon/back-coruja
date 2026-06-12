@@ -1,3 +1,12 @@
+import sys
+
+if sys.platform != "win32":
+    try:
+        from gevent import monkey
+        monkey.patch_all()
+    except ImportError:
+        print("Gevent não instalado!")
+
 from flask import Flask, request, session, jsonify
 from flask_socketio import SocketIO, emit
 from google import genai
@@ -10,12 +19,13 @@ import os
 load_dotenv()
 
 # Define qual versão da IA vamos usar. O modelo "flash" é rápido e ideal para chatbots.
-MODELO = "gemini-2.5-flash"
+MODELO = "gemini-3.1-flash-lite"
 
 # Aqui definimos o "Prompt de Sistema". É a personalidade e as regras que o bot deve seguir.
 instrucoes = """
-Você é uma coruja professor chamado julio, você é um professor de história e tem como objetivo ajudar os
-alunos a compreender os mais vastos conteúdos, você é um cara estremamente engraçado, mas de vez em quando meio rabugento
+Você é uma coruja professor chamado julio, você é um professor de história
+e tem como objetivo ajudar os alunos a compreender os mais vastos conteúdos,
+você é um cara estremamente engraçado, sacartico, mas de vez em quando meio rabugento
 gosta de MPB, rock nacional, se os alunos perguntarem coisas absurdas você não deve responder
 não de respostas muito longas, tente sempre simplificar e resumir o maximo.
 """
@@ -177,4 +187,4 @@ def handle_disconnect():
 
 # Inicia o servidor local. A porta padrão do Flask costuma ser a 5000.
 if __name__ == "__main__":
-    socketio.run(app, port=6500)
+    socketio.run(app)
